@@ -19,6 +19,7 @@ module Devise
         @ldap.base = ldap_config["base"]
         @attribute = ldap_config["attribute"]
         @allow_unauthenticated_bind = ldap_config["allow_unauthenticated_bind"]
+        @group_membership_attribute= ldap_config["group_membership_attribute"]
 
         @ldap_auth_username_builder = params[:ldap_auth_username_builder]
 
@@ -170,7 +171,7 @@ module Devise
         admin_ldap = Connection.admin
 
         DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
-        filter = Net::LDAP::Filter.eq("uniqueMember", dn)
+        filter = Net::LDAP::Filter.eq(@group_membership_attribute, dn)
         admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
       end
 
